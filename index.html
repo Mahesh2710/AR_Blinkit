@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +10,9 @@
     
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        /* HIDE VR/AR BUTTONS FOR MOBILE */
+        .a-enter-vr, .a-enter-ar { display: none !important; }
 
         /* WELCOME SCREEN */
         #welcome-page {
@@ -41,14 +43,14 @@
         #play-button {
             width: 130px;
             height: 60px;
-            background: #007bff; /* Vibrant Blue */
+            background: #007bff;
             border: 3px solid #ffffff;
-            border-radius: 50px; /* Oval Shape */
+            border-radius: 50px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-left: 200px;
+            margin: 0 auto; /* Center button horizontally */
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
             animation: pulse 2s infinite;
@@ -133,7 +135,9 @@
     <a href="https://blinkit.com/s/?q=holi" target="_blank" id="buy-now-cta">BUY NOW</a>
 
     <a-scene 
-        mindar-image="imageTargetSrc: https://mahesh2710.github.io/ARData/target/blinkit_target.mind; autoStart: false; uiScanning: #none;">
+        mindar-image="imageTargetSrc: https://mahesh2710.github.io/ARData/target/blinkit_target.mind; autoStart: false; uiScanning: #none;" 
+        xr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false">
         
         <a-assets>
             <video id="myVideo" src="https://mahesh2710.github.io/ARData/video/Blinkit.mp4" loop="true" crossorigin="anonymous" playsinline webkit-playsinline preload="metadata"></video>
