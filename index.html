@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Blinkit AR - Final UI Update</title>
+    <title>Blinkit AR - Premium UI</title>
     
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
 
         /* HIDE VR/AR BUTTONS */
         .a-enter-vr, .a-enter-ar { display: none !important; }
@@ -17,93 +17,114 @@
         /* WELCOME SCREEN */
         #welcome-page {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 100; background: #000 url('https://mahesh2710.github.io/ARData/target/Blinkit_BG.png') center/cover;
+            z-index: 100; background: #1a1a1a url('https://mahesh2710.github.io/ARData/target/blinkit_poster.jpg') center/cover;
             display: flex; align-items: flex-end;
         }
 
         /* SLIDING BOTTOM OVERLAY */
         #bottom-sheet {
             width: 100%;
-            height: 40%; 
-            border-radius: 30px 30px 0 0;
+            height: 50%; 
+            border-radius: 40px 40px 0 0;
             position: relative;
             display: flex;
-            padding: 20px;
-            box-sizing: border-box;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6)), 
-                        url('https://mahesh2710.github.io/ARData/target/welcome.jpg') center/cover;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 -15px 35px rgba(0,0,0,0.6);
+            background: #121212 url('https://mahesh2710.github.io/ARData/target/welcome.jpg') center/cover;
             transform: translateY(100%);
-            animation: slideUp 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation: slideUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
-        @keyframes slideUp { to { transform: translateY(0); } }
+        /* TEXT OVERLAY AREA */
+        #sheet-content {
+            flex: 1;
+            padding: 40px 30px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-        /* UPDATED PLAY BUTTON: Bottom Right & Delayed */
-        #play-button {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            width: 120px;
-            height: 55px;
-            background: #007bff;
-            border: 3px solid #ffffff;
+        #sheet-content h1 {
+            color: white;
+            font-size: 2.2rem;
+            margin: 0;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        #sheet-content h1 span {
+            background: #a3ff00; /* Neon Lime highlight like reference */
+            color: black;
+            padding: 2px 12px;
             border-radius: 50px;
+            display: inline-block;
+        }
+
+        /* BOTTOM NAV BAR (FOOTER) */
+        #sheet-footer {
+            background: #000;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #a3ff00; /* Green line separator */
+        }
+
+        .footer-text h2 { color: white; margin: 0; font-size: 1.2rem; }
+        .footer-text p { color: #888; margin: 5px 0 0 0; font-size: 0.9rem; }
+
+        /* UPDATED PLAY BUTTON: Bottom Right & Animated */
+        #play-button {
+            width: 110px;
+            height: 50px;
+            background: #4185f4; /* Royal Blue */
+            border: none;
+            border-radius: 25px;
             cursor: pointer;
-            display: none; /* Hidden by default, shown via JS */
+            display: none; /* Controlled by JS */
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            transition: all 0.3s ease;
-            animation: pulse 2s infinite;
+            box-shadow: 0 4px 15px rgba(65, 133, 244, 0.4);
+            transition: transform 0.2s ease;
+            opacity: 0;
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         #play-button span {
             color: white;
-            font-size: 1.2rem;
-            font-weight: 900;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            font-size: 1.1rem;
+            font-weight: 700;
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(0, 123, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
-        }
-
-        /* SCANNER UI */
+        /* SCANNER & VIDEO UI */
         #scanner-ui {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: none; flex-direction: column; justify-content: center; align-items: center;
             z-index: 50; pointer-events: none;
         }
         .scanner-frame { width: 75vw; height: 75vw; position: relative; display: flex; justify-content: center; align-items: center; }
-        .scanner-img { width: 70%; opacity: 0.4; filter: brightness(1.2); }
-        .scanner-line { position: absolute; width: 100%; height: 4px; background: #f1c40f; top: 0; animation: scan 2s linear infinite; }
+        .scanner-img { width: 70%; opacity: 0.4; }
+        .scanner-line { position: absolute; width: 100%; height: 4px; background: #a3ff00; top: 0; animation: scan 2s linear infinite; }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        @keyframes slideUp { to { transform: translateY(0); } }
 
-        /* STICKY VIDEO LAYER */
         #video-container {
             position: fixed; top: 46%; left: 50%; transform: translate(-50%, -50%);
             width: 90%; height: 90%; display: none; z-index: 40; justify-content: center; align-items: center;
         }
-        #video-wrapper { position: relative; width: 100%; display: flex; justify-content: center; }
-        #video-container video { width: 100%; height: auto; border: 4px solid #f1c40f; border-radius: 30px; object-fit: cover; }
-        #close-sticky {
-            position: absolute; top: -10px; right: -10px; width: 45px; height: 45px; 
-            background: #fc0000; color: white; border: 2px solid #fff; border-radius: 50%;
-            font-size: 30px; font-weight: bold; cursor: pointer; z-index: 45; 
-            display: flex; justify-content: center; align-items: center;
-        }
+        #video-wrapper { position: relative; width: 100%; }
+        #video-container video { width: 100%; border: 4px solid #a3ff00; border-radius: 30px; }
 
-        /* BUY NOW CTA */
         #buy-now-cta {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: 280px; height: 70px; font-size: 0; color: transparent;
-            background: url('https://raw.githubusercontent.com/Mahesh2710/ARData/main/target/blinkit-buy-now.png') no-repeat center;
-            background-size: contain; border: none; z-index: 60; display: none;
-            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+            width: 280px; height: 70px; display: none; z-index: 60;
+            background: url('https://raw.githubusercontent.com/Mahesh2710/ARData/main/target/blinkit-buy-now.png') no-repeat center/contain;
         }
     </style>
 </head>
@@ -111,9 +132,19 @@
 
     <div id="welcome-page">
         <div id="bottom-sheet">
-            <button id="play-button">
-                <span>PLAY</span>
-            </button>
+            <div id="sheet-content">
+                <h1>Tap <span>Play</span> to get<br>started with the<br>Experience.</h1>
+            </div>
+            
+            <div id="sheet-footer">
+                <div class="footer-text">
+                    <h2>Ready to Play?</h2>
+                    <p>Unlock the next level experience</p>
+                </div>
+                <button id="play-button">
+                    <span>Play</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -122,21 +153,20 @@
             <img src="https://mahesh2710.github.io/ARData/target/blinkit_scanner.png" class="scanner-img">
             <div class="scanner-line"></div>
         </div>
-        <div style="color:white; margin-top:20px; font-weight:bold; text-shadow: 0 2px 4px #000;">SCAN THE PRODUCT IMAGE</div>
+        <div style="color:white; margin-top:20px; font-weight:bold;">SCAN THE PRODUCT IMAGE</div>
     </div>
 
     <div id="video-container">
         <div id="video-wrapper">
-            <button id="close-sticky">×</button>
+            <button id="close-sticky" style="position:absolute; top:-10px; right:-10px; width:40px; height:40px; background:red; border-radius:50%; color:white; border:none; z-index:100;">×</button>
         </div>
     </div>
 
-    <a href="https://blinkit.com/s/?q=holi" target="_blank" id="buy-now-cta">BUY NOW</a>
+    <a href="https://blinkit.com/s/?q=holi" target="_blank" id="buy-now-cta"></a>
 
     <a-scene 
         mindar-image="imageTargetSrc: https://mahesh2710.github.io/ARData/target/blinkit_target.mind; autoStart: false; uiScanning: #none;" 
-        xr-mode-ui="enabled: false" 
-        device-orientation-permission-ui="enabled: false">
+        xr-mode-ui="enabled: false">
         
         <a-assets>
             <video id="myVideo" src="https://mahesh2710.github.io/ARData/video/Blinkit.mp4" loop="true" crossorigin="anonymous" playsinline webkit-playsinline preload="metadata"></video>
@@ -145,71 +175,33 @@
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
         <a-entity mindar-image-target="targetIndex: 0" id="target-entity">
-            <a-text value="BLINKIT" align="center" color="#f1c40f" width="4" position="0 1.2 0"></a-text>
-            <a-entity geometry="primitive: plane; width: 1.25; height: 2.15" material="color: #f1c40f" position="0 0 -0.01"></a-entity>
             <a-video id="ar-video-renderer" src="#myVideo" width="1.2" height="2.1" position="0 0 0"></a-video>
         </a-entity>
     </a-scene>
 
     <script>
-        const welcomePage = document.querySelector('#welcome-page');
         const playBtn = document.querySelector('#play-button');
+        const welcomePage = document.querySelector('#welcome-page');
         const scannerUi = document.querySelector('#scanner-ui');
-        const videoContainer = document.querySelector('#video-container');
-        const videoWrapper = document.querySelector('#video-wrapper');
-        const buyNowBtn = document.querySelector('#buy-now-cta');
         const video = document.querySelector('#myVideo');
         const sceneEl = document.querySelector('a-scene');
-        const targetEntity = document.querySelector('#target-entity');
-        const arVideoRenderer = document.querySelector('#ar-video-renderer');
-        const closeStickyBtn = document.querySelector('#close-sticky');
 
-        let canSticky = true; 
-        let hasFoundOnce = false;
-
-        // Show play button after the slideUp animation finishes (700ms)
+        // Delay Play Button to match animation
         setTimeout(() => {
             playBtn.style.display = 'flex';
-        }, 750);
+            playBtn.style.animation = 'fadeInRight 0.5s ease forwards';
+        }, 900);
 
         playBtn.addEventListener('click', () => {
             welcomePage.style.display = 'none';
             scannerUi.style.display = 'flex';
-            video.load(); 
-            video.pause();
             sceneEl.systems["mindar-image-system"].start(); 
         });
 
-        targetEntity.addEventListener('targetFound', () => {
-            hasFoundOnce = true;
+        document.querySelector('#target-entity').addEventListener('targetFound', () => {
             scannerUi.style.display = 'none';
-            videoContainer.style.display = 'none';
-            buyNowBtn.style.display = 'block'; 
-            arVideoRenderer.setAttribute('visible', 'true');
-            document.querySelector('a-assets').appendChild(video);
-            video.muted = false;
-            video.play().catch(e => console.log(e));
-        });
-
-        targetEntity.addEventListener('targetLost', () => {
-            if (canSticky && hasFoundOnce) {
-                arVideoRenderer.setAttribute('visible', 'false');
-                videoContainer.style.display = 'flex';
-                videoWrapper.appendChild(video);
-                video.play();
-            } else {
-                video.pause();
-            }
-        });
-
-        closeStickyBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            canSticky = false; 
-            video.pause();
-            video.currentTime = 0; 
-            videoContainer.style.display = 'none';
-            scannerUi.style.display = 'flex';
-            document.querySelector('a-assets').appendChild(video);
+            document.querySelector('#buy-now-cta').style.display = 'block';
+            video.play();
         });
     </script>
 </body>
