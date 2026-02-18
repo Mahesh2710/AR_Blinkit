@@ -11,7 +11,7 @@
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-        /* HIDE VR/AR BUTTONS FOR MOBILE */
+        /* HIDE VR/AR BUTTONS */
         .a-enter-vr, .a-enter-ar { display: none !important; }
 
         /* WELCOME SCREEN */
@@ -26,8 +26,8 @@
             width: 100%;
             height: 40%; 
             border-radius: 30px 30px 0 0;
+            position: relative;
             display: flex;
-            flex-direction: column;
             padding: 20px;
             box-sizing: border-box;
             box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
@@ -39,30 +39,30 @@
 
         @keyframes slideUp { to { transform: translateY(0); } }
 
-        /* BLUE OVAL PLAY BUTTON */
+        /* UPDATED PLAY BUTTON: Bottom Right & Delayed */
         #play-button {
-            width: 130px;
-            height: 60px;
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 120px;
+            height: 55px;
             background: #007bff;
             border: 3px solid #ffffff;
             border-radius: 50px;
             cursor: pointer;
-            display: flex;
+            display: none; /* Hidden by default, shown via JS */
             justify-content: center;
             align-items: center;
-            margin: 0 auto; /* Center button horizontally */
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
             animation: pulse 2s infinite;
         }
 
-        #play-button:active { transform: scale(0.92); }
-
         #play-button span {
             color: white;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: 900;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
@@ -90,7 +90,6 @@
         }
         #video-wrapper { position: relative; width: 100%; display: flex; justify-content: center; }
         #video-container video { width: 100%; height: auto; border: 4px solid #f1c40f; border-radius: 30px; object-fit: cover; }
-
         #close-sticky {
             position: absolute; top: -10px; right: -10px; width: 45px; height: 45px; 
             background: #fc0000; color: white; border: 2px solid #fff; border-radius: 50%;
@@ -154,6 +153,7 @@
 
     <script>
         const welcomePage = document.querySelector('#welcome-page');
+        const playBtn = document.querySelector('#play-button');
         const scannerUi = document.querySelector('#scanner-ui');
         const videoContainer = document.querySelector('#video-container');
         const videoWrapper = document.querySelector('#video-wrapper');
@@ -167,9 +167,12 @@
         let canSticky = true; 
         let hasFoundOnce = false;
 
-        video.pause();
+        // Show play button after the slideUp animation finishes (700ms)
+        setTimeout(() => {
+            playBtn.style.display = 'flex';
+        }, 750);
 
-        document.querySelector('#play-button').addEventListener('click', () => {
+        playBtn.addEventListener('click', () => {
             welcomePage.style.display = 'none';
             scannerUi.style.display = 'flex';
             video.load(); 
