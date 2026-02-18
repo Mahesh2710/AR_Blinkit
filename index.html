@@ -55,7 +55,7 @@
         }
 
         #sheet-content h1 span {
-            background: #FFFF; /* Neon Lime highlight like reference */
+            background: #a3ff00;
             color: black;
             padding: 2px 12px;
             border-radius: 50px;
@@ -69,25 +69,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 2px solid #FFFF; /* Green line separator */
+            border-top: 2px solid #a3ff00;
         }
 
         .footer-text h2 { color: white; margin: 0; font-size: 1.2rem; }
         .footer-text p { color: #888; margin: 5px 0 0 0; font-size: 0.9rem; }
 
-        /* UPDATED PLAY BUTTON: Bottom Right & Animated */
         #play-button {
             width: 110px;
             height: 50px;
-            background: #4185f4; /* Royal Blue */
+            background: #4185f4;
             border: none;
             border-radius: 25px;
             cursor: pointer;
-            display: none; /* Controlled by JS */
+            display: none;
             justify-content: center;
             align-items: center;
             box-shadow: 0 4px 15px rgba(65, 133, 244, 0.4);
-            transition: transform 0.2s ease;
             opacity: 0;
         }
 
@@ -96,13 +94,9 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        #play-button span {
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
+        #play-button span { color: white; font-size: 1.1rem; font-weight: 700; }
 
-        /* SCANNER & VIDEO UI */
+        /* SCANNER UI */
         #scanner-ui {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: none; flex-direction: column; justify-content: center; align-items: center;
@@ -113,13 +107,6 @@
         .scanner-line { position: absolute; width: 100%; height: 4px; background: #a3ff00; top: 0; animation: scan 2s linear infinite; }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
         @keyframes slideUp { to { transform: translateY(0); } }
-
-        #video-container {
-            position: fixed; top: 46%; left: 50%; transform: translate(-50%, -50%);
-            width: 90%; height: 90%; display: none; z-index: 40; justify-content: center; align-items: center;
-        }
-        #video-wrapper { position: relative; width: 100%; }
-        #video-container video { width: 100%; border: 4px solid #a3ff00; border-radius: 30px; }
 
         #buy-now-cta {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -133,6 +120,7 @@
     <div id="welcome-page">
         <div id="bottom-sheet">
             <div id="sheet-content">
+                <h1>Tap <span>Play</span> to get<br>started with the<br>Experience.</h1>
             </div>
             
             <div id="sheet-footer">
@@ -153,12 +141,6 @@
             <div class="scanner-line"></div>
         </div>
         <div style="color:white; margin-top:20px; font-weight:bold;">SCAN THE PRODUCT IMAGE</div>
-    </div>
-
-    <div id="video-container">
-        <div id="video-wrapper">
-            <button id="close-sticky" style="position:absolute; top:-10px; right:-10px; width:40px; height:40px; background:red; border-radius:50%; color:white; border:none; z-index:100;">×</button>
-        </div>
     </div>
 
     <a href="https://blinkit.com/s/?q=holi" target="_blank" id="buy-now-cta"></a>
@@ -191,10 +173,24 @@
             playBtn.style.animation = 'fadeInRight 0.5s ease forwards';
         }, 900);
 
+        async function startExperience() {
+            try {
+                // Manually request camera permission first to ensure it's granted
+                await navigator.mediaDevices.getUserMedia({ video: true });
+                
+                // If granted, hide UI and start MindAR
+                welcomePage.style.display = 'none';
+                scannerUi.style.display = 'flex';
+                sceneEl.systems["mindar-image-system"].start();
+                
+            } catch (err) {
+                console.error("Camera access denied:", err);
+                alert("Please enable camera permissions to use the AR experience.");
+            }
+        }
+
         playBtn.addEventListener('click', () => {
-            welcomePage.style.display = 'none';
-            scannerUi.style.display = 'flex';
-            sceneEl.systems["mindar-image-system"].start(); 
+            startExperience();
         });
 
         document.querySelector('#target-entity').addEventListener('targetFound', () => {
